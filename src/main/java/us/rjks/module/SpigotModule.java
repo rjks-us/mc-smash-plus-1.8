@@ -78,7 +78,13 @@ public class SpigotModule {
 
     public void reloadFile() throws Exception {
         cache.clear();
-        config = YamlConfiguration.loadConfiguration(getFile());
+        try {
+            config = YamlConfiguration.loadConfiguration(getFile());
+        } catch (Exception e) {
+            getFile().renameTo(new File(getFile().getName() + ".invalid.json"));
+            loadFromCache(getName());
+            config = YamlConfiguration.loadConfiguration(getFile());
+        }
     }
 
     public void save() throws Exception {
