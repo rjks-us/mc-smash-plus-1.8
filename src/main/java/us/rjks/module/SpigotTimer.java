@@ -19,7 +19,7 @@ public class SpigotTimer {
 
     private Plugin instance;
 
-    public SpigotTimer(long numb1, long numb2, Plugin instance) {
+    public SpigotTimer(Plugin instance, long numb1, long numb2) {
         this.numb1 = numb1;
         this.numb2 = numb2;
         this.instance = instance;

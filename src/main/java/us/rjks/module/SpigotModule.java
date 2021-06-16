@@ -46,7 +46,8 @@ public class SpigotModule {
 
                 loadFile();
             }
-        } catch (Exception exception) {}
+        } catch (Exception exception) {
+        }
     }
 
     public void createEmptyFile() throws Exception {
@@ -78,13 +79,7 @@ public class SpigotModule {
 
     public void reloadFile() throws Exception {
         cache.clear();
-        try {
-            config = YamlConfiguration.loadConfiguration(getFile());
-        } catch (Exception e) {
-            getFile().renameTo(new File(getFile().getName() + ".invalid.json"));
-            loadFromCache(getName());
-            config = YamlConfiguration.loadConfiguration(getFile());
-        }
+        config = YamlConfiguration.loadConfiguration(getFile());
     }
 
     public void save() throws Exception {
@@ -121,5 +116,13 @@ public class SpigotModule {
 
     public HashMap<String, Object> getCache() {
         return cache;
+    }
+
+    public Plugin getPlugin() {
+        return plugin;
+    }
+
+    public File getDir() {
+        return dir;
     }
 }

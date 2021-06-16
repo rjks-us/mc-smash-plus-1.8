@@ -1,5 +1,6 @@
 package us.rjks.smash;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,7 +20,15 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        gameManager = new GameManager();
+        try {
+            gameManager = new GameManager();
+            gameManager.loadListeners();
+        } catch (Exception e) {
+            System.out.println("[INFO] Fatal error while loading the plugin");
+            e.printStackTrace();
+            System.out.println("[INFO] Plugin disabling due of the fatal error");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
 
         super.onEnable();
     }
@@ -42,7 +51,7 @@ public class Main extends JavaPlugin {
         return gameManager;
     }
 
-    public static GameManager getPlugin() {
-        return gameManager;
+    public static Main getPlugin() {
+        return instance;
     }
 }
