@@ -1,0 +1,73 @@
+## This Plugin was written by Robert Kratz on 19. June 2021
+## You need help with setting up the Plugin? Check out my Discord: https://link.rjks.us/support
+##
+## The Group with the lowest permission level should be the default rank and have the power > 0 <, the group with the highest permission level should have the power > 100 < or higher
+## The Hex color defines the color of the Particle for example: 'ad1100' (DARK_RED)
+## Find a Color Hex Generator on https://www.google.com/search?q=color+picker
+
+## If you need a translated version of the Plugin -> https://link.rjks.us/smash-v1
+## Wenn du eine übersetzte Version des Plugins brauchst -> https://link.rjks.us/smash-v1
+
+Player:
+  permission: system.tab.player
+  color: '&7'
+  tabprefix: '&7'
+  tabsuffix: ''
+  chatformat: "&7Player &8\u25CF &7%playername%&8:&f"
+  hex: b3b3b3
+  power: 5
+  defaultRank: true
+VIP:
+  permission: system.tab.vip
+  color: '&d'
+  tabprefix: "&dVIP &8\u25CF &d"
+  tabsuffix: ''
+  chatformat: "&dVIP &8\u25CF &d%playername%&8:&f "
+  hex: FF55FF
+  power: 10
+  defaultRank: false
+Builder:
+  permission: system.tab.builder
+  color: '&e'
+  tabprefix: "&eBuilder &8\u25CF &e"
+  tabsuffix: ''
+  chatformat: "&eBuilder &8\u25CF &e%playername%&8:&f "
+  hex: FFFF55
+  power: 20
+  defaultRank: false
+Supporter:
+  permission: system.tab.supporter
+  color: '&b'
+  tabprefix: "&bSup &8\u25CF &b"
+  tabsuffix: ''
+  chatformat: "&bSupport &8\u25CF &b%playername%&8:&f "
+  hex: 55FFFF
+  power: 30
+  defaultRank: false
+Moderator:
+  permission: system.tab.moderator
+  color: '&c'
+  tabprefix: "&cMod &8\u2503 &c"
+  tabsuffix: ''
+  chatformat: "&cModeration &8\u25CF &c%playername%&8:&f "
+  hex: FF5555
+  power: 40
+  defaultRank: false
+Developer:
+  permission: system.tab.developer
+  color: '&9'
+  tabprefix: "&9Dev &8\u25CF &9"
+  tabsuffix: ''
+  chatformat: "&9Developer &8\u25CF &9%playername%&8:&f "
+  hex: 5555FF
+  power: 50
+  defaultRank: false
+Admin:
+  permission: system.tab.admin
+  color: '&3'
+  tabprefix: "&3&lAdmin &8\u25CF &3"
+  tabsuffix: ''
+  chatformat: "&3&lAdmin &8\u25CF &3%playername%&8:&f "
+  hex: 37bcfa
+  power: 100
+  defaultRank: false

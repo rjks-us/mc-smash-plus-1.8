@@ -1,3 +1,5 @@
 name: smash-plus
 main: us.rjks.smash.Main
 version: 1.0
+commands:
+  smash:

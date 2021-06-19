@@ -1,0 +1,32 @@
+## This plugin was written by Robert Kratz on June 15. 2021
+
+rocket:
+  name: '&bRocket'
+  material: 'FIREWORK'
+  display: '&eBooster'
+  description: 'to the moon'
+fireball:
+  name: '&cFireball'
+  material: 'FIRE_CHARGE'
+  display: '&eFireball'
+  description: 'fire boom boom dead'
+tnt:
+  name: '&dTnt'
+  material: 'TNT'
+  display: '&eTNT'
+  description: 'fire in the hall'
+trap:
+  name: '&4Trap'
+  material: 'LEGACY_STRING'
+  display: '&eTripwire'
+  description: 'trap trap trap'
+hammer:
+  name: '&eHammer'
+  material: 'LEGACY_GOLD_PICKAXE'
+  display: '&eThors Hammer'
+  description: 'into the void'
+heal:
+  name: '&aHeal'
+  material: 'LEGACY_GOLDEN_APPLE'
+  display: '&eHealer'
+  description: 'there has to be a good thing in this world'

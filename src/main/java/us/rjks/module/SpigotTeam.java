@@ -1,16 +1,17 @@
 package us.rjks.module;
 
-import org.bukkit.entity.Arrow;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /***************************************************************************
  *
@@ -24,6 +25,8 @@ public class SpigotTeam extends SpigotModule implements Listener {
 
     private ArrayList<Team> teams = new ArrayList<>();
 
+    private Scoreboard scoreboard;
+
     private boolean friendlyFire = false;
 
     public SpigotTeam(Plugin plugin, String directory, String name, ModuleType type, boolean autoCreate) {
@@ -31,15 +34,22 @@ public class SpigotTeam extends SpigotModule implements Listener {
     }
 
     public void loadTeams() throws Exception {
+
+        int amount = 0;
         for (String team : getConfig().getConfigurationSection("").getKeys(false)) {
-            teams.add(new Team(getConfig().getString(""),
-                    getConfig().getString(team + ".prefix"),
-                    getConfig().getString(team + ".suffix"),
-                    getConfig().getString(team + ".chatformat"),
-                    getConfig().getString(team + ".tabformat"),
-                    getConfig().getString(team + ".color"),
-                    getConfig().getInt(team + ".members")));
+            if (!team.equalsIgnoreCase("spectator")) {
+                teams.add(new Team(getConfig().getString(""),
+                        getConfig().getString(team + ".prefix"),
+                        getConfig().getString(team + ".suffix"),
+                        getConfig().getString(team + ".chatformat"),
+                        getConfig().getString(team + ".tabformat"),
+                        getConfig().getString(team + ".color"),
+                        getConfig().getInt(team + ".members")));
+                amount++;
+            }
         }
+
+        getPlugin().getLogger().log(Level.INFO, "[TEAM] Loaded " + amount + " teams");
     }
 
     public Team getTeamByName(String name) {
@@ -79,6 +89,20 @@ public class SpigotTeam extends SpigotModule implements Listener {
         }
         lowest.addPlayerToTeam(player);
         return lowest;
+    }
+
+    public void setTabListTeam(Player player) {
+        Team team = getTeamByPlayer(player);
+        if (team != null) {
+            scoreboard.getTeam(team.getName()).addEntry(player.getName());
+            player.setDisplayName(team.getChatformat().replaceAll("%player%", player.getName()));
+        } else {
+            scoreboard.getTeam("spectator").addEntry(player.getName());
+            player.setDisplayName("§7" + player.getName());
+        }
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            all.setScoreboard(scoreboard);
+        }
     }
 
     public ArrayList<Team> getTeams() {

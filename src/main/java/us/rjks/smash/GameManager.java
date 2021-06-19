@@ -13,6 +13,7 @@ import us.rjks.module.SpigotTeam;
 import us.rjks.utils.*;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /***************************************************************************
  *
@@ -27,6 +28,8 @@ public class GameManager {
     private TitleManager titleManager;
     private Config config;
     private SpigotTeam team;
+    private TabList tabList;
+    private ItemManager itemManager;
 
     private Plugin plugin;
 
@@ -53,10 +56,29 @@ public class GameManager {
         this.config.loadTemplate("config.yml");
         this.config.loadFile();
 
+        /**
+         * Team Manager
+         * */
         this.team = new SpigotTeam(plugin, plugin.getDataFolder() + "/", "teams", ModuleType.YML, false);
         this.team.loadTemplate("teams.yml");
         this.team.loadFile();
         this.team.loadTeams();
+
+        /**
+         * TabList Manager
+         * */
+        this.tabList = new TabList(plugin, plugin.getDataFolder() + "/", "tablist", ModuleType.YML, false);
+        this.tabList.loadTemplate("tablist.yml");
+        this.tabList.loadFile();
+        this.tabList.loadTabList();
+
+        /**
+         * Item Manager
+         * */
+        this.itemManager = new ItemManager(plugin, plugin.getDataFolder() + "/", "items", ModuleType.YML, false);
+        this.itemManager.loadTemplate("items.yml");
+        this.itemManager.loadFile();
+        this.itemManager.loadItems();
 
         this.active = true;
     }
@@ -64,6 +86,18 @@ public class GameManager {
     public void loadListeners() {
         pm.registerEvents(new Join(), plugin);
         pm.registerEvents(new Quit(), plugin);
+    }
+
+    public void reload() throws Exception {
+        config.reloadFile();
+        team.reloadFile();
+        tabList.reloadFile();
+    }
+
+    public void disablePlugin() {
+        HandlerList.unregisterAll();
+        Bukkit.getPluginManager().disablePlugin(getPlugin());
+        getPlugin().getLogger().log(Level.INFO, "The Plugin has been disabled");
     }
 
     /**
@@ -104,8 +138,20 @@ public class GameManager {
         this.gameState = gameState;
     }
 
+    public PluginManager getPluginManager() {
+        return pm;
+    }
+
     public GameState getGameState() {
         return gameState;
+    }
+
+    public TabList getTabList() {
+        return tabList;
+    }
+
+    public ItemManager getItemManager() {
+        return itemManager;
     }
 
     public boolean isActive() {

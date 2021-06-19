@@ -1,0 +1,30 @@
+## This plugin was written by Robert Kratz on June 15. 2021
+
+BLUE:
+  prefix: '&9Blue &8| &9'
+  suffix: ''
+  chatformat: '&9Blue &8| &9%player% &8: &f'
+  tabformat: '&9%player%'
+  color: '4287f5'
+  members: 2
+RED:
+  prefix: '&cRed &8| &c'
+  suffix: ''
+  chatformat: '&cRed &8| &c%player% &8: &f'
+  tabformat: '&c%player%'
+  color: 'ff573d'
+  members: 2
+YELLOW:
+  prefix: '&eYellow &8| &c'
+  suffix: ''
+  chatformat: '&eYellow &8| &e%player% &8: &f'
+  tabformat: '&e%player%'
+  color: 'ffdb3d'
+  members: 2
+GREEN:
+  prefix: '&aGreen &8| &c'
+  suffix: ''
+  chatformat: '&eGreen &8| &a%player% &8: &f'
+  tabformat: '&a%player%'
+  color: '84ff3d'
+  members: 2

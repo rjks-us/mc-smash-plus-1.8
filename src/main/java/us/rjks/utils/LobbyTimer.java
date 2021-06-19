@@ -60,6 +60,7 @@ public class LobbyTimer extends SpigotTimer implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage("§8[§a+§8] §7Player §2" + event.getPlayer().getName() + " §7joined the game");
+        Main.getGameManager().getTabList().setTabList(event.getPlayer());
     }
 
     @EventHandler

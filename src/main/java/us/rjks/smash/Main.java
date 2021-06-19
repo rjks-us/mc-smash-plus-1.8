@@ -3,6 +3,7 @@ package us.rjks.smash;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import us.rjks.cmd.Smash;
 
 /***************************************************************************
  *
@@ -21,15 +22,16 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         try {
+            getCommand("smash").setExecutor(new Smash(this));
+
             gameManager = new GameManager();
             gameManager.loadListeners();
         } catch (Exception e) {
             System.out.println("[INFO] Fatal error while loading the plugin");
             e.printStackTrace();
             System.out.println("[INFO] Plugin disabling due of the fatal error");
-            Bukkit.getPluginManager().disablePlugin(this);
+            gameManager.disablePlugin();
         }
-
         super.onEnable();
     }
 
