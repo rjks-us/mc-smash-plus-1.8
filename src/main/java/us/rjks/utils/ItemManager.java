@@ -121,14 +121,18 @@ public class ItemManager extends SpigotModule implements Listener {
      * */
     @EventHandler
     public void onPickUp(PlayerPickupItemEvent event) {
+        LivingItem livingItemm = null;
         for (LivingItem livingItem : livingItems) {
             if (livingItem.getDroppedItem().equals(event.getItem())) {
+                livingItemm = livingItem;
                 Item item = livingItem.getItem();
                 livingItem.remove();
                 event.getPlayer().setDisplayName("You Picked up the " + item.getName() + " item");
                 event.getPlayer().getInventory().addItem(new ItemStack(item.getMaterial()));
+                event.setCancelled(true);
             }
         }
+        livingItems.remove(livingItemm);
     }
 
     private class Item {

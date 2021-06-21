@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 import us.rjks.functions.DoubleJump;
 import us.rjks.listener.Join;
 import us.rjks.listener.Quit;
+import us.rjks.map.MapManager;
 import us.rjks.module.ModuleType;
 import us.rjks.module.SpigotTeam;
 import us.rjks.utils.*;
@@ -30,6 +31,7 @@ public class GameManager {
     private SpigotTeam team;
     private TabList tabList;
     private ItemManager itemManager;
+    private MapManager mapManager;
 
     private Plugin plugin;
 
@@ -50,11 +52,21 @@ public class GameManager {
         this.titleManager = new TitleManager();
         this.pm = Bukkit.getPluginManager();
 
-        setGameState(GameState.LOBBY);
-
         this.config = new Config(plugin, plugin.getDataFolder() + "/", "config", ModuleType.YML, false);
         this.config.loadTemplate("config.yml");
         this.config.loadFile();
+
+        /**
+         * Map Manager
+         * */
+        MapManager.Requirement requirement = new MapManager.Requirement();
+        requirement.addLocationRequirement("spawn");
+        requirement.addPropertyRequirement("deathheight");
+
+        this.mapManager = new MapManager(plugin, plugin.getDataFolder() + "/", "maps", ModuleType.YML, false);
+        this.mapManager.createEmptyFile();
+        this.mapManager.initMapManager(requirement);
+        this.mapManager.loadMaps();
 
         /**
          * Team Manager
@@ -79,6 +91,8 @@ public class GameManager {
         this.itemManager.loadTemplate("items.yml");
         this.itemManager.loadFile();
         this.itemManager.loadItems();
+
+        setGameState(GameState.LOBBY);
 
         this.active = true;
     }
@@ -108,6 +122,7 @@ public class GameManager {
             case LOBBY:
                 this.lobbyTimer = new LobbyTimer(this.plugin, 20, 20);
                 this.pm.registerEvents(this.lobbyTimer, plugin);
+                this.pm.registerEvents(this.itemManager, plugin);
                 this.lobbyTimer.start();
                 break;
             case INGAME:
@@ -148,6 +163,10 @@ public class GameManager {
 
     public TabList getTabList() {
         return tabList;
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
     }
 
     public ItemManager getItemManager() {

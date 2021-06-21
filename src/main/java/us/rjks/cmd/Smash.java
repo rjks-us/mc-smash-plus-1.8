@@ -37,7 +37,6 @@ public class Smash implements CommandExecutor {
                         sender.sendMessage("There was an error while reloading the plugin, check the console");
                     }
                 } else if (args[0].equalsIgnoreCase("spawn")) {
-                    Main.getGameManager().getPluginManager().registerEvents(Main.getGameManager().getItemManager(), plugin);
                     Main.getGameManager().getItemManager().addLocation(((Player) sender).getLocation());
                     Main.getGameManager().getItemManager().spawnRandomItemToLocation(((Player) sender).getLocation());
                 }
