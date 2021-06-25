@@ -22,10 +22,13 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         try {
-            getCommand("smash").setExecutor(new Smash(this));
-
             gameManager = new GameManager();
             gameManager.loadListeners();
+
+            /**
+             * Commands are relying on the GameManager so it has to be registered after the GameManager
+             * */
+            getCommand("smash").setExecutor(new Smash(this));
         } catch (Exception e) {
             System.out.println("[INFO] Fatal error while loading the plugin");
             e.printStackTrace();
@@ -37,6 +40,11 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        try {
+            getGameManager().getMapManager().disable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDisable();
     }
 

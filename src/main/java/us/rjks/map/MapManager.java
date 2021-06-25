@@ -2,12 +2,14 @@ package us.rjks.map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import us.rjks.module.ModuleType;
 import us.rjks.module.SpigotModule;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /***************************************************************************
  *
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 
 public class MapManager extends SpigotModule {
 
+    private String directory;
+
     private File mapDirectory;
     private Requirement requirement;
     private ArrayList<Map> mapCache = new ArrayList<>();
@@ -27,41 +31,79 @@ public class MapManager extends SpigotModule {
         super(plugin, directory, name, type, autoCreate);
     }
 
+    public Map createMap(String ingameName, String configName) throws Exception {
+        if (!new File("plugins/" + getPlugin().getName() + "/maps/" + configName).exists()) return null;
+
+        String path = configName + ".";
+        getConfig().set(path + "ingame", ingameName);
+        getConfig().set(path + "author", "NO_AUTHOR_PROVIDED");
+        getConfig().set(path + "description", "NO_DESCRIPTION_PROVIDED");
+        getConfig().set(path + "icon", "RECORD_3");
+
+        save();
+
+        Map map = new Map(getPlugin(), ingameName, directory, configName);
+        mapCache.add(map);
+        return map;
+    }
+
     /**
      * This has to be called as the default constructor
      * */
-    public void initMapManager(Requirement requirement) {
-        this.mapDirectory = new File("plugins/" + getPlugin().getName() + "/maps/");
+    public void initMapManager(Requirement requirement, String directory) {
+        this.mapDirectory = new File(directory);
         this.requirement = requirement;
+        this.directory = directory;
     }
 
     public void loadMaps() {
-        int amount = 0;
+        int amount = 0, setup = 0;
         for (String map : getConfig().getConfigurationSection("").getKeys(false)) {
-            Map createdMap = new Map(getPlugin(), getConfig().getString(map + ".ingame"), "plugin/" + map + "/", map);
+            Map createdMap = new Map(getPlugin(), getConfig().getString(map + ".ingame"), directory, map);
             createdMap.setAuthor(getConfig().getString(map + ".author"));
             createdMap.setDescription(getConfig().getString(map + ".description"));
+            createdMap.setIcon(Material.valueOf(getConfig().getString(map + ".icon")));
 
             //Properties
-            for (String properties : getConfig().getConfigurationSection(map + ".property").getKeys(false)) {
-                createdMap.setProperty(properties, getConfig().getString(map + ".property." + properties));
-            }
+            try {
+                for (String properties : getConfig().getConfigurationSection(map + ".property").getKeys(false)) {
+                    createdMap.setProperty(properties, getConfig().getString(map + ".property." + properties));
+                }
+            } catch (Exception e) {}
 
             //Location Collection
-            for (String collection : getConfig().getConfigurationSection(map + ".locationcollection").getKeys(false)) {
-                Location location = new Location(Bukkit.getWorld(createdMap.getConfigName()), 0, 0, 0);
-                location.setX(getConfig().getDouble(map + ".locationcollection." + collection + ".x"));
-                location.setY(getConfig().getDouble(map + ".locationcollection." + collection + ".y"));
-                location.setZ(getConfig().getDouble(map + ".locationcollection." + collection + ".z"));
-                location.setYaw((float) getConfig().getDouble(map + ".locationcollection." + collection + ".yaw"));
-                location.setPitch((float) getConfig().getDouble(map + ".locationcollection." + collection + ".pitch"));
+            try {
+                for (String collection : getConfig().getConfigurationSection(map + ".locationcollection").getKeys(false)) {
+                    Location location = new Location(Bukkit.getWorld(createdMap.getConfigName()), 0, 0, 0);
+                    location.setX(getConfig().getDouble(map + ".locationcollection." + collection + ".x"));
+                    location.setY(getConfig().getDouble(map + ".locationcollection." + collection + ".y"));
+                    location.setZ(getConfig().getDouble(map + ".locationcollection." + collection + ".z"));
+                    location.setYaw((float) getConfig().getDouble(map + ".locationcollection." + collection + ".yaw"));
+                    location.setPitch((float) getConfig().getDouble(map + ".locationcollection." + collection + ".pitch"));
 
-                createdMap.addLocation(collection, location);
-            }
+                    createdMap.addLocation(collection, location);
+                }
+            } catch (Exception e) {}
+
+            //Locations
+            try {
+                for (String collection : getConfig().getConfigurationSection(map + ".location").getKeys(false)) {
+                    Location location = new Location(Bukkit.getWorld(createdMap.getConfigName()), 0, 0, 0);
+                    location.setX(getConfig().getDouble(map + ".location." + collection + ".x"));
+                    location.setY(getConfig().getDouble(map + ".location." + collection + ".y"));
+                    location.setZ(getConfig().getDouble(map + ".location." + collection + ".z"));
+                    location.setYaw((float) getConfig().getDouble(map + ".location." + collection + ".yaw"));
+                    location.setPitch((float) getConfig().getDouble(map + ".location." + collection + ".pitch"));
+
+                    createdMap.addLocation(collection, location);
+                }
+            } catch (Exception e) {}
 
             mapCache.add(createdMap);
-            System.out.println("[MAP] Loaded " + amount + " maps");
+            amount++;
+            if (mapIsSetUp(createdMap)) setup++;
         }
+        getPlugin().getLogger().log(Level.INFO, "[MAP] Loaded " + amount + " maps, " + setup + " are meeting all requirements");
     }
 
     public boolean mapIsSetUp(Map map) {
@@ -73,23 +115,23 @@ public class MapManager extends SpigotModule {
             }
         }
         for (String requirementRequirement : this.requirement.getLocationRequirements()) {
+            boolean state = false;
             for(String name : map.getLocations().keySet()){
-                boolean state = false;
                 if (name.startsWith(requirementRequirement)) {
                     state = true;
                 }
-                if (!state) return false;
             }
+            if (!state) return false;
         }
 
         for (String requirementRequirement : this.requirement.getLocationCollectionRequirements()) {
+            boolean state = false;
             for(String name : map.getLocations().keySet()){
-                boolean state = false;
                 if (name.startsWith(requirementRequirement)) {
                     state = true;
                 }
-                if (!state) return false;
             }
+            if (!state) return false;
         }
         return true;
     }
@@ -98,18 +140,19 @@ public class MapManager extends SpigotModule {
      * Property
      * */
 
-    public void setPropertyToMap(Map map, String name, Object object) {
+    public void addPropertyToMap(Map map, String name, Object object) throws Exception {
         map.setProperty(name, object);
 
         String path = map.getConfigName() + ".property.";
         getConfig().set(path + "." + name, object);
+        save();
     }
 
     /**
      * Normal Location
      * */
 
-    public void setLocationToMap(Map map, String name, Location location) throws Exception {
+    public void addLocationToMap(Map map, String name, Location location) throws Exception {
         map.addLocation(name, location);
 
         String path = map.getConfigName() + ".location.";
@@ -164,6 +207,15 @@ public class MapManager extends SpigotModule {
 
     public void createMapDirectory() throws Exception {
         if (mapDirectory.exists()) mapDirectory.mkdirs();
+    }
+
+    public void disable() throws Exception {
+        int amount = 0;
+        for (Map map : mapCache) {
+            map.unloadMap();
+            amount++;
+        }
+        System.out.println("Successfully unloaded " + amount + " Maps");
     }
 
     public static class Requirement {

@@ -172,6 +172,10 @@ public class Map {
         this.author = author;
     }
 
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
+
     public HashMap<String, Location> getLocations() {
         return locations;
     }

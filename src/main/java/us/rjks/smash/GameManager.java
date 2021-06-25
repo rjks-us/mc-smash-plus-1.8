@@ -62,10 +62,13 @@ public class GameManager {
         MapManager.Requirement requirement = new MapManager.Requirement();
         requirement.addLocationRequirement("spawn");
         requirement.addPropertyRequirement("deathheight");
+        requirement.addLocationCollectionRequirement("respawn");
 
         this.mapManager = new MapManager(plugin, plugin.getDataFolder() + "/", "maps", ModuleType.YML, false);
         this.mapManager.createEmptyFile();
-        this.mapManager.initMapManager(requirement);
+        this.mapManager.initMapManager(requirement, "plugins/" + getPlugin().getName() + "/maps/");
+        this.mapManager.createMapDirectory();
+        this.mapManager.loadFile();
         this.mapManager.loadMaps();
 
         /**
